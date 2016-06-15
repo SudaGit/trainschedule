@@ -1,0 +1,118 @@
+<html>
+<head>
+	<!--define heading -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<link rel="stylesheet" href="traincss.css">
+	<script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"> </script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<title>BootCamp Transit
+	</title>
+	<h1>BootCamp Transit</h1>
+	<h2><img src="train.jpg" alt="Train Schedule" height=150px> </img></h2>
+</head>
+<body>
+<!-- define Time Table Elements -->
+  <div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">BootCamp Trains</div>
+  <div class="panel-body">
+    <!-- Table -->
+  <table>
+     <thead>
+     	<tr>
+     	  <th scope="col" colspan="3" class="hdl">Train Name </th>
+     	  <th scope="col" class="hdl">Destination </th>
+     	  <th scope="col" class="hdl">Frequency</th>
+     	  <th scope="col" class="hdl">Next Arrival </th>
+     	  <th scope="col" class="hdl">Minutes Away </th>
+       	</tr>
+     </thead>
+     <tbody class="trows" id="onet"></tbody>
+  </table>
+   </div>
+</div>
+<form>
+<div class="input-group">
+  <span class="input-group-addon" id="basic-addon1"></span>
+  <input type="text" class="form-control" id="tName" placeholder="TrainName" aria-describedby="basic-addon1">
+</div>
+
+<div class="input-group">
+  <input type="text" class="form-control" id="Dest" placeholder="Destination" aria-describedby="basic-addon1">
+  <span class="input-group-addon" id="basic-addon2"></span>
+</div>
+
+<div class="input-group">
+  <span class="input-group-addon"></span>
+  <input type="text" class="form-control" id="FirstT" placeholder="Timing of First Train" aria-label="FirstTrain">
+  <span class="input-group-addon"></span>
+</div>
+
+<label for="basic-url"></label>
+<div class="input-group">
+  <span class="input-group-addon" id="basic-addon3"></span>
+  <input type="number" class="form-control" id="Freq" placeholder="Frequency" aria-describedby="basic-addon3">
+</div>
+<button id="submitTid" type="submit" class="btn btn-primary">Submit</button>
+</form>
+</body>
+<script type="text/javascript">
+var trainData = new Firebase("https://njtrans.firebaseio.com/");
+$(document).ready(function() {
+
+  $("#submitTid").on("click", function() {
+	
+	console.log($("#tName").val().trim());
+	console.log($("#Dest").val().trim());
+	console.log($("#FirstT").val().trim());
+	console.log($("#Freq").val().trim());
+
+	var tname = $("#tName").val().trim();
+	var tdest =  $("#Dest").val().trim();
+	var firstt =  $("#FirstT").val().trim();
+	var tfreq  =  $("#Freq").val().trim();
+
+	trainData.push({
+		trainame:tname,
+		traindest:tdest,
+		firstrain:firstt,
+		trainfreq:tfreq
+	});
+ 
+
+  trainData.on("child_added", function(snapshot) {
+
+    // 
+    //console.log(snapshot.val());
+
+    // 
+
+      var $tabrow = $("<tr id='tdata'></tr>");
+
+      $("#onet").append($tabrow);
+      var $name =$("<th id='tnm'>"+snapshot.trainame+"</th>");
+      $("#tdata").append($name);
+      var $dest =$("<th id='tds'>"+snapshot.traindest+"</th>");
+      $("#tdata").append($dest);
+      var $ftrn =$("<th id='ftr'>"+snapshot.firstrain+"</th>");
+      $("#tdata").append($ftrn);
+       var $tfrq =$("<th id='ftr'>"+snapshot.trainfreq+"</th>");
+      $("#tdata").append($tfrq);
+  
+      
+  // 
+  }, function (errorObject) {
+
+    // 
+      console.log("The read failed: " + errorObject.code);
+  
+  }); //child_added end
+
+	   }); // onClick end
+}); // document ready end
+</script>
+</html>
